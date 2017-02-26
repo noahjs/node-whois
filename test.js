@@ -1,0 +1,140 @@
+var _, assert, whois;
+
+_ = require('underscore');
+
+assert = require('assert');
+
+whois = require('./index');
+
+describe('#lookup()', function() {
+  it('should work with google.com', function(done) {
+    return whois.lookup('google.com', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain name: google.com'), -1);
+      return done();
+    });
+  });
+  it('should work with 50.116.8.109', function(done) {
+    return whois.lookup('50.116.8.109', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('netname:        linode-us'), -1);
+      return done();
+    });
+  });
+  it('should work with 2001:0db8:11a3:09d7:1f34:8a2e:07a0:765d', function(done) {
+    return whois.lookup('2001:0db8:11a3:09d7:1f34:8a2e:07a0:765d', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('netname:        ipv6-doc-ap'), -1);
+      return done();
+    });
+  });
+  it('should honor specified WHOIS server', function(done) {
+    return whois.lookup('gandi.net', {
+      server: 'whois.gandi.net'
+    }, function(err, data) {
+      assert.ifError(err);
+      data = data.toLowerCase();
+      assert.notEqual(data.indexOf('whois server: whois.gandi.net'), -1);
+      assert.notEqual(data.indexOf('domain name: gandi.net'), -1);
+      return done();
+    });
+  });
+  it('should honor specified WHOIS server with port override', function(done) {
+    return whois.lookup('tucows.com', {
+      server: 'whois.tucows.com:43'
+    }, function(err, data) {
+      assert.ifError(err);
+      data = data.toLowerCase();
+      assert.notEqual(data.indexOf('whois server: whois.tucows.com'), -1);
+      assert.notEqual(data.indexOf('domain name: tucows.com'), -1);
+      return done();
+    });
+  });
+  it('should follow specified number of redirects for domain', function(done) {
+    return whois.lookup('google.com', {
+      follow: 1
+    }, function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain name: google.com'), -1);
+      return done();
+    });
+  });
+  it('should follow specified number of redirects for IP address', function(done) {
+    return whois.lookup('176.58.115.202', {
+      follow: 1
+    }, function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('netname:        linode-uk'), -1);
+      return done();
+    });
+  });
+  it('should work with nic.sh', function(done) {
+    return whois.lookup('nic.sh', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain reserved'), -1);
+      return done();
+    });
+  });
+  it('should work with nic.io', function(done) {
+    return whois.lookup('nic.io', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain reserved'), -1);
+      return done();
+    });
+  });
+  it('should work with nic.ac', function(done) {
+    return whois.lookup('nic.ac', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain reserved'), -1);
+      return done();
+    });
+  });
+  it('should work with nic.tm', function(done) {
+    return whois.lookup('nic.tm', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain reserved'), -1);
+      return done();
+    });
+  });
+  it('should work with srs.net.nz', function(done) {
+    return whois.lookup('srs.net.nz', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain_name: srs.net.nz'), -1);
+      return done();
+    });
+  });
+  it('should work with redundant follow', function(done) {
+    return whois.lookup('google.com', {
+      follow: 5
+    }, function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain name: google.com'), -1);
+      return done();
+    });
+  });
+  it('should work with küche.de', function(done) {
+    return whois.lookup('küche.de', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain: küche.de'), -1);
+      assert.notEqual(data.toLowerCase().indexOf('status: connect'), -1);
+      return done();
+    });
+  });
+  it('should work with google.co.jp in english', function(done) {
+    return whois.lookup('google.co.jp', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('a. [domain name]                google.co.jp'), -1);
+      return done();
+    });
+  });
+  return it('should work with registry.pro', function(done) {
+    return whois.lookup('registry.pro', function(err, data) {
+      assert.ifError(err);
+      assert.notEqual(data.toLowerCase().indexOf('domain id: d107300000000006392-lrms'), -1);
+      return done();
+    });
+  });
+});
+
+// ---
+// generated by coffee-script 1.9.2
